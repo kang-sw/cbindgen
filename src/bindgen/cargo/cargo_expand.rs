@@ -69,8 +69,9 @@ pub fn expand(
     expand_features: &Option<Vec<String>>,
     profile: Profile,
 ) -> Result<String, Error> {
-    let cargo = env::var("CARGO").unwrap_or_else(|_| String::from("cargo"));
-    let mut cmd = Command::new(cargo);
+    // let cargo = env::var("CARGO").unwrap_or_else(|_| String::from("cargo"));
+    let mut cmd = Command::new("rustup");
+    cmd.args(["run", "nightly", "cargo"]);
 
     let mut _temp_dir = None; // drop guard
     if use_tempdir {
@@ -132,6 +133,7 @@ pub fn expand(
     cmd.arg("--");
     cmd.arg("-Zunpretty=expanded");
     info!("Command: {:?}", cmd);
+    dbg!(&cmd);
     let output = cmd.output()?;
 
     let src = from_utf8(&output.stdout)?.to_owned();
